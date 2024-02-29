@@ -1,33 +1,57 @@
+import random
+
 class BankAccount:
+    accounts = []
+
     def __init__(self, account_holder, initial_balance=0.0):
+        self.account_number = self.generate_account_number()
         self.account_holder = account_holder
         self.balance = initial_balance
+        BankAccount.accounts.append(self)
+
+    def generate_account_number(self):
+        return random.randint(100000, 999999)
 
     def deposit(self, amount):
-        if amount > 0:
-            self.balance += amount
-            return f"Deposit of ${amount} successful. New balance: ${self.balance}"
-        else:
-            return "Invalid deposit amount."
+        try:
+            amount = float(amount)
+            if amount > 0:
+                self.balance += amount
+                return f"Deposit of ${amount} successful. New balance: ${self.balance}"
+            else:
+                raise ValueError("Invalid deposit amount.")
+        except ValueError as e:
+            return str(e)
 
     def withdraw(self, amount):
-        if amount > 0 and amount <= self.balance:
-            self.balance -= amount
-            return f"Withdrawal of ${amount} successful. New balance: ${self.balance}"
-        else:
-            return "Invalid withdrawal amount or insufficient funds."
+        try:
+            amount = float(amount)
+            if amount > 0 and amount <= self.balance:
+                self.balance -= amount
+                return f"Withdrawal of ${amount} successful. New balance: ${self.balance}"
+            else:
+                raise ValueError("Invalid withdrawal amount or insufficient funds.")
+        except ValueError as e:
+            return str(e)
 
     def check_balance(self):
-        return f"Current balance for {self.account_holder}: ${self.balance}"
+        return f"Account {self.account_number} - {self.account_holder}: ${self.balance}"
 
 
 # Example usage:
 if __name__ == "__main__":
-    # Create a new account
+    # Create some accounts
     john_account = BankAccount("John Doe", 1000.0)
+    jane_account = BankAccount("Jane Smith", 1500.0)
 
     # Make some transactions
     print(john_account.check_balance())
     print(john_account.deposit(500.0))
-    print(john_account.withdraw(200.0))
+    print(jane_account.check_balance())
+    print(jane_account.withdraw(200.0))
     print(john_account.check_balance())
+
+    # Display all accounts
+    print("\nAll accounts:")
+    for account in BankAccount.accounts:
+        print(account.check_balance())
